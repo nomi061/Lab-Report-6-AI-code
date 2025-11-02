@@ -1,0 +1,32 @@
+class ThermostatAgent:
+    def __init__(self):
+        self.history = []  # Store past temperature readings
+
+    def sense(self, temperature):
+        self.history.append(temperature)
+        if len(self.history) > 5:  # Keep recent 5 readings
+            self.history.pop(0)
+
+    def decide(self):
+        current = self.history[-1]
+        if current < 20:
+            return "Turn ON Heater"
+        elif current > 24:
+            return "Turn ON Cooler"
+        else:
+            # Predict trend
+            if len(self.history) >= 3:
+                if self.history[-1] - self.history[-3] > 2:
+                    return "Cooling soon (preventive)"
+                elif self.history[-3] - self.history[-1] > 2:
+                    return "Heating soon (preventive)"
+            return "Maintain"
+
+# Simulation
+agent = ThermostatAgent()
+temperatures = [19, 21, 22, 25, 23, 20]
+
+for t in temperatures:
+    agent.sense(t)
+    action = agent.decide()
+    print(f"Temp: {t}°C → Action: {action}")
