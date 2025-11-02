@@ -1,0 +1,55 @@
+import random
+
+class Environment:
+    def __init__(self):
+        self.rooms = {'A': 'Dirty', 'B': 'Dirty', 'C': 'Dirty'}
+        self.agent_location = 'A'
+        self.clean_count = 0  # For later use (Task 1c)
+
+    def get_percept(self):
+        return self.agent_location, self.rooms[self.agent_location]
+
+    def execute_action(self, action):
+        if action == 'Vacuum':
+            if self.rooms[self.agent_location] == 'Dirty':
+                self.rooms[self.agent_location] = 'Clean'
+                self.clean_count += 1
+        elif action == 'Right':
+            if self.agent_location == 'A':
+                self.agent_location = 'B'
+            elif self.agent_location == 'B':
+                self.agent_location = 'C'
+        elif action == 'Left':
+            if self.agent_location == 'C':
+                self.agent_location = 'B'
+            elif self.agent_location == 'B':
+                self.agent_location = 'A'
+        elif action == 'Random':
+            self.agent_location = random.choice(['A', 'B', 'C'])
+class SimpleReflexAgent:
+    def __init__(self):
+        self.rules = {
+            ('A', 'Dirty'): 'Vacuum',
+            ('B', 'Dirty'): 'Vacuum',
+            ('C', 'Dirty'): 'Vacuum',
+            ('A', 'Clean'): 'Right',
+            ('B', 'Clean'): 'Right',
+            ('C', 'Clean'): 'Left'
+        }
+
+    def select_action(self, percept, all_rooms):
+        # If all rooms are clean, move randomly
+        if all(status == 'Clean' for status in all_rooms.values()):
+            return 'Random'
+        return self.rules.get(percept, 'NoOp')
+env = Environment()
+agent = SimpleReflexAgent()
+
+for step in range(10):
+    percept = env.get_percept()
+    action = agent.select_action(percept, env.rooms)
+    print(f"Step {step + 1}: Percept: {percept}, Action: {action}")
+    env.execute_action(action)
+    print(f"Current Room States: {env.rooms}")
+
+print("\nTotal Rooms Cleaned:", env.clean_count)
