@@ -1,0 +1,25 @@
+class SmartLightAgent:
+    def __init__(self):
+        self.rules = {
+            ('Motion', 'Dark'): 'Light ON',
+            ('NoMotion', 'Dark'): 'Light OFF',
+            ('Motion', 'Bright'): 'Light OFF',
+            ('NoMotion', 'Bright'): 'Light OFF'
+        }
+
+    def select_action(self, percept):
+        return self.rules.get(percept, 'No Action')
+
+
+# Simulation
+agent = SmartLightAgent()
+percepts = [
+    ('Motion', 'Dark'),
+    ('NoMotion', 'Dark'),
+    ('Motion', 'Bright'),
+    ('NoMotion', 'Bright')
+]
+
+for p in percepts:
+    action = agent.select_action(p)
+    print(f"Percept: {p} → Action: {action}")
